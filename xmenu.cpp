@@ -142,7 +142,7 @@ void menu(int option, int size,string x[])
 void mainMenu()
 {
 int maxOptions = 7; // Max Options means number of items in the menu
-string mainMenuOptions[maxOptions] = 
+string mainMenuOptions[] = 
 {
 "New Account",
 "Deposit Amount.",
