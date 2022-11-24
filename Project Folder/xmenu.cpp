@@ -277,12 +277,12 @@ void menu(int option, int size,std::string x[]) //accepted arguments: option sel
         
         if(option==(i+1))
         {
-            if(i==size-1) SetConsoleTextAttribute(console_color, 320); else SetConsoleTextAttribute(console_color, 288);
-            print(10, 7+i, x[i].length() + 14, x[i]);
+            if(i==size-1) SetConsoleTextAttribute(console_color, 335); else SetConsoleTextAttribute(console_color, 288);
+            print(25, 7+i, 26, string((26-x[i].length())/2, ' ')+x[i]);
             SetConsoleTextAttribute(console_color, 15);
         }
         else
-            print(10, 7+i, x[i].length() + 14, x[i]);
+            print(25, 7+i, 26, x[i]);
     }
 }
 
