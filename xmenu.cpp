@@ -54,7 +54,6 @@ return 0;
 
 void write_account()
 {
-    system("cls");
 	account ac;
 	ofstream outFile;
 	outFile.open("account.dat",ios::binary|ios::app);
@@ -376,7 +375,6 @@ void account::create_account()
 	cout<<"\nEnter The Initial amount(>=500 for Saving and >=1000 for Current ) : ";
 	cin>>deposit;
 	cout<<"\n\n\nAccount Created..";
-	system("CLS");
 }
 
 void account::show_account() const
