@@ -59,8 +59,8 @@ void printLogo(int);
 int main()
 {
 	HWND hWnd=GetConsoleWindowNT();
-    MoveWindow(hWnd,200,100,900,400,TRUE);
-
+    MoveWindow(hWnd,100,50,900,600,TRUE);
+	system("title C++ Project by Amrinder Singh ^|^| Bank System using OOP && cls");
 mainMenu();
 return 0;
 }
