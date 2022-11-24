@@ -6,7 +6,7 @@
 #include<conio.h>
 #include<cstdlib>
 #include<string>
-#define ENTER_ACCOUNT 	system("cls");printLogo(47);print(xindex, yindex+1, 0, "Enter account number: ");int n;cin>>n;
+#define ENTER_ACCOUNT 	system("cls");printLogo(47, 48);print(xindex, yindex+1, 0, "Enter account number: ");int n;cin>>n;
 #define MAIN_MENU 0
 int xindex=10,yindex=7; // index for knowing where to start writing from
 using namespace std;
@@ -25,6 +25,8 @@ HWND WINAPI GetConsoleWindowNT(void) // REF: 1 Nothing to see here, this is used
     }
     return GetConsoleWindow();
 }
+
+
 //!			Class definition
 class account
 {
@@ -45,6 +47,7 @@ public:
 };
 
 //!    	function declaration
+void ShowConsoleCursor(bool showFlag);
 void insertLines (int x);
 void write_account();
 void display_sp();
@@ -56,12 +59,14 @@ void menu(int option, int size,string x[]);
 void mainMenu();
 void print(int x,int y,int erase,const std::string& s);
 void gotoxy(int, int);
-void printLogo(int);
+void printLogo(int, int);
 //!     main function
 int main()
 {
 	HWND hWnd=GetConsoleWindowNT();
     MoveWindow(hWnd,100,50,1000,500,TRUE); //moving console to some position, see REF: 1
+	ShowConsoleCursor(false);
+	SetConsoleTextAttribute(console_color, 15); //setting color to default in case console isn't dark mode by default
 	system("title C++ Project by Amrinder Singh && cls");
 mainMenu();
 return 0;
@@ -272,12 +277,12 @@ void menu(int option, int size,std::string x[]) //accepted arguments: option sel
         
         if(option==(i+1))
         {
-            if(i==size-1) SetConsoleTextAttribute(console_color, 4); else SetConsoleTextAttribute(console_color, 10);
-            print(10, 7+i, x[i].length() + 14,  "--->   "+x[i]+"   <---");
+            if(i==size-1) SetConsoleTextAttribute(console_color, 335); else SetConsoleTextAttribute(console_color, 288);
+            print(25, 7+i, 26, string((26-x[i].length())/2, ' ')+x[i]);
             SetConsoleTextAttribute(console_color, 15);
         }
         else
-            print(10, 7+i, x[i].length() + 14, x[i]);
+            print(25, 7+i, 26, x[i]);
     }
 }
 
@@ -296,7 +301,7 @@ string mainMenuOptions[] =
 "Exit"
 };
 int option=1;
-printLogo(48);
+printLogo(48, 47);
 menu(option,maxOptions,mainMenuOptions);
 char ch;
 void (*p[6])(void); // pointers to functions to avoid making endless switch cases
@@ -326,7 +331,7 @@ while(menuID == MAIN_MENU) // Main menu bool, to keep track of when main menu is
 		if(option==2 || option==3)
 			deposit_withdraw(option-1); //since they can't be called via pointer array, calling em this way.
 		else if(option==7)
-			{system("cls");exit(3);} //if enter was pressed on "exit" button
+			{system("cls");ShowConsoleCursor(true);exit(3);} //if enter was pressed on "exit" button
 		else
 			p[option-1](); //call the function assigned via pointer functions
     }
@@ -355,7 +360,7 @@ void insertLines (int x) {for(int i=0;i<x;i++)cout<<"\n";} //Planned to use it, 
 void account::create_account()
 {
 	system("cls");
-	printLogo(47);
+	printLogo(47, 48);
 	print(xindex, yindex, 0, "Enter the account number:");
 	cin>>account_number;
 	print(xindex, yindex+1, 0, "Enter name of the account holder:");
@@ -433,7 +438,18 @@ char account::rettype() const
 {
 	return type;
 }
-void printLogo(int color) //cute cat logo since i'm a cat lover
+void ShowConsoleCursor(bool showFlag)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_CURSOR_INFO     cursorInfo;
+
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
+}
+
+void printLogo(int color, int color2) //cute cat logo since i'm a cat lover
 {
 std::cout<<"                                                                  ";
 int index=5;
@@ -443,12 +459,17 @@ print(index,2,0,"        (    (` -`7       )    BANK                            
 print(index,3,0,"         \\    |  -\\      /      OF                                ");
 print(index,4,0,"          \\   c_ c.)_/  /      CATS                               ");
 print(index,5,0,"           \\           /                                          ");
-		SetConsoleTextAttribute(console_color, 15);
-for(int i=0;i<12;i++)
+SetConsoleTextAttribute(console_color, color2);
+for(int i=0;i<18;i++)
 	{
-	print(index,6+i,0,"|");
-	print(65+index,6+i,0,"|");
+	print(index-1,i,0," "); // |
+	print(66+index,i,0," "); //    |
 	}
-for(int i=index+1;i<65+index;i++)
-	print(i, 17, 0, "_");
+for(int i=index;i<65+index+1;i++)
+{
+print(i, 17, 0, " "); // _
+print(i, 0, 0, " ");
+}
+print(index,0,0,"          /             \\                                        ");
+SetConsoleTextAttribute(console_color, 15);
 }
