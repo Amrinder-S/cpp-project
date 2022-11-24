@@ -62,8 +62,8 @@ int main()
 {
 	HWND hWnd=GetConsoleWindowNT();
     MoveWindow(hWnd,100,50,1000,500,TRUE); //moving console to some position, see REF: 1
-	system("title C++ Project by Amrinder Singh && cls");
 	SetConsoleTextAttribute(console_color, 15); //setting color to default in case console isn't dark mode by default
+	system("title C++ Project by Amrinder Singh && cls");
 mainMenu();
 return 0;
 }
