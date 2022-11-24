@@ -25,6 +25,8 @@ HWND WINAPI GetConsoleWindowNT(void) // REF: 1 Nothing to see here, this is used
     }
     return GetConsoleWindow();
 }
+
+
 //!			Class definition
 class account
 {
@@ -45,6 +47,7 @@ public:
 };
 
 //!    	function declaration
+void ShowConsoleCursor(bool showFlag);
 void insertLines (int x);
 void write_account();
 void display_sp();
@@ -62,6 +65,7 @@ int main()
 {
 	HWND hWnd=GetConsoleWindowNT();
     MoveWindow(hWnd,100,50,1000,500,TRUE); //moving console to some position, see REF: 1
+	ShowConsoleCursor(false);
 	SetConsoleTextAttribute(console_color, 15); //setting color to default in case console isn't dark mode by default
 	system("title C++ Project by Amrinder Singh && cls");
 mainMenu();
@@ -327,7 +331,7 @@ while(menuID == MAIN_MENU) // Main menu bool, to keep track of when main menu is
 		if(option==2 || option==3)
 			deposit_withdraw(option-1); //since they can't be called via pointer array, calling em this way.
 		else if(option==7)
-			{system("cls");exit(3);} //if enter was pressed on "exit" button
+			{system("cls");ShowConsoleCursor(true);exit(3);} //if enter was pressed on "exit" button
 		else
 			p[option-1](); //call the function assigned via pointer functions
     }
@@ -434,6 +438,17 @@ char account::rettype() const
 {
 	return type;
 }
+void ShowConsoleCursor(bool showFlag)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_CURSOR_INFO     cursorInfo;
+
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
+}
+
 void printLogo(int color, int color2) //cute cat logo since i'm a cat lover
 {
 std::cout<<"                                                                  ";
