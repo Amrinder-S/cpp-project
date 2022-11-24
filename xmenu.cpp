@@ -5,8 +5,10 @@
 #include<windows.h>
 #include<conio.h>
 #include<cstdlib>
-#define ENTER_ACCOUNT cout<<"Enter account number:";cin>>num;
+#include<string>
+#define ENTER_ACCOUNT 	system("cls");printLogo(47);print(xindex, yindex+1, 0, "Enter account number: ");int n;cin>>n;
 #define MAIN_MENU 0
+int xindex=10,yindex=7;
 using namespace std;
 COORD coord = {0,0};
 HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -24,7 +26,7 @@ HWND WINAPI GetConsoleWindowNT(void)
     return GetConsoleWindow();
 }
 //!			Class definition
-class account	//TODO : ADD AUTOMATIC ACCOUNT NUMBERS
+class account
 {
 	int account_number;
 	char name[50];
@@ -45,9 +47,9 @@ public:
 //!    	function declaration
 void insertLines (int x);
 void write_account();
-void display_sp(int);
-void modify_account(int);	
-void delete_account(int);	
+void display_sp();
+void modify_account();
+void delete_account();	
 void display_all();		
 void deposit_withdraw(int, int); 
 void menu(int option, int size,string x[]);
@@ -59,7 +61,7 @@ void printLogo(int);
 int main()
 {
 	HWND hWnd=GetConsoleWindowNT();
-    MoveWindow(hWnd,100,50,900,600,TRUE);
+    MoveWindow(hWnd,100,50,1000,500,TRUE);
 	system("title C++ Project by Amrinder Singh ^|^| Bank System using OOP && cls");
 mainMenu();
 return 0;
@@ -83,9 +85,9 @@ void write_account()
 
 //!    	function to read specific record from file
 
-void display_sp(int n)
+void display_sp()
 {
-    system("cls");
+ENTER_ACCOUNT
 	account ac;
 	bool flag=false;
 	ifstream inFile;
@@ -95,7 +97,6 @@ void display_sp(int n)
 		cout<<"File could not be open !! Press any Key...";
 		return;
 	}
-	cout<<"\nBALANCE DETAILS\n";
 
     	while(inFile.read(reinterpret_cast<char *> (&ac), sizeof(account)))
 	{
@@ -107,7 +108,12 @@ void display_sp(int n)
 	}
 	inFile.close();
 	if(flag==false)
-		cout<<"\n\nAccount number does not exist";
+	{
+		SetConsoleTextAttribute(console_color, 4);
+		print(xindex, yindex+5, 0, "Record not found.");
+		SetConsoleTextAttribute(console_color, 15);
+
+	}
     getch();
     menuID = 0;
     mainMenu();
@@ -116,9 +122,9 @@ void display_sp(int n)
 
 //!    	function to modify record of file
 
-void modify_account(int n)
+void modify_account()
 {
-    system("cls");
+ENTER_ACCOUNT
 	bool found=false;
 	account ac;
 	fstream File;
@@ -134,12 +140,15 @@ void modify_account(int n)
 		if(ac.returnAccountNumber()==n)
 		{
 			ac.show_account();
-			cout<<"\n\nEnter The New Details of account"<<endl;
+			print(xindex, yindex+2, 0, "Enter new details of the account.");
 			ac.modify();
 			int pos=(-1)*static_cast<int>(sizeof(account));
 			File.seekp(pos,ios::cur);
 			File.write(reinterpret_cast<char *> (&ac), sizeof(account));
-			cout<<"\n\n\t Record Updated";
+			ac.show_account();
+			SetConsoleTextAttribute(console_color, 47);
+			print(43, yindex-2, 15,"| Record Updated!");
+			SetConsoleTextAttribute(console_color, 15);
 			found=true;
 		  }
 	}
@@ -147,6 +156,7 @@ void modify_account(int n)
 	if(found==false)
 		cout<<"\n\n Record Not Found ";
     getch();
+	system("cls");
     menuID = 0;
     mainMenu();
 }
@@ -154,9 +164,9 @@ void modify_account(int n)
 //!    	function to delete record of file
 
 
-void delete_account(int n)
+void delete_account()
 {
-    system("cls");
+ENTER_ACCOUNT
 	account ac;
 	ifstream inFile;
 	ofstream outFile;
@@ -174,12 +184,16 @@ void delete_account(int n)
 		{
 			outFile.write(reinterpret_cast<char *> (&ac), sizeof(account));
 		}
+		else
+			ac.show_account();
 	}
 	inFile.close();
 	outFile.close();
 	remove("account.dat");
 	rename("Temp.dat","account.dat");
-	cout<<"\n\n\tRecord Deleted ..";
+	SetConsoleTextAttribute(console_color, 4);
+	print(xindex, yindex+5, 0, "Record Deleted!!");
+	SetConsoleTextAttribute(console_color, 15);
     getch();
     menuID = 0;
     mainMenu();
@@ -187,9 +201,9 @@ void delete_account(int n)
 
 
 //!function to deposit and withdraw amounts
-void deposit_withdraw(int n, int option)
+void deposit_withdraw(int option)
 {
-    system("cls");
+ENTER_ACCOUNT
 	int amt;
 	bool found=false;
 	account ac;
@@ -208,33 +222,40 @@ void deposit_withdraw(int n, int option)
 			ac.show_account();
 			if(option==1)
 			{
-				cout<<"\n\n\tTO DEPOSIT AMOUNT ";
-				cout<<"\n\nEnter The amount to be deposited: ";
+
+				print(xindex, yindex+1, 0, "Enter The amount to be deposited: ");
 				cin>>amt;
+				if(amt<0) amt=-amt;
 				ac.dep(amt);
+				print(xindex, yindex+2, 0, "Amount "+to_string(amt)+" deposited");
 			}
 			if(option==2)
 			{
-				cout<<"\n\n\tTO WITHDRAW AMOUNT ";
-				cout<<"\n\nEnter The amount to be withdraw:";
+				print(xindex, yindex+1, 0, "Enter The amount to be withdrawn: ");
 				cin>>amt;
+				if(amt<0) amt=-amt;
 				int bal=ac.retdeposit()-amt;
 				if((bal<500 && ac.rettype()=='S') || (bal<1000 && ac.rettype()=='C'))
-					cout<<"Insufficience balance";
+					print(xindex, yindex+2, 0, "Enter The amount to be withdrawn: ");
 				else
 					ac.draw(amt);
+				print(xindex, yindex+3, 0, "Amount "+to_string(amt)+" withdrawn.");
 			}
 			int pos=(-1)*static_cast<int>(sizeof(ac));
 			File.seekp(pos,ios::cur);
 			File.write(reinterpret_cast<char *> (&ac), sizeof(account));
-			cout<<"\n\n\t Record Updated";
+			ac.show_account();
+			SetConsoleTextAttribute(console_color, 47);
+			print(43, yindex-2, 25,"| Record Updated!");
+			SetConsoleTextAttribute(console_color, 15);
 			found=true;
 	       }
          }
 	File.close();
 	if(found==false)
-		cout<<"\n\n Record Not Found ";
+		print(xindex, yindex+5, 0, "Record not found!");
     getch();
+	system("cls");
     menuID = 0;
     mainMenu();
 }
@@ -248,11 +269,11 @@ void menu(int option, int size,std::string x[])
         if(option==(i+1))
         {
             if(i==size-1) SetConsoleTextAttribute(console_color, 4); else SetConsoleTextAttribute(console_color, 10);
-            print(30, 6+i, x[i].length() + 14,  "--->   "+x[i]+"   <---");
+            print(10, 7+i, x[i].length() + 14,  "--->   "+x[i]+"   <---");
             SetConsoleTextAttribute(console_color, 15);
         }
         else
-            print(30, 6+i, x[i].length() + 14, x[i]);
+            print(10, 7+i, x[i].length() + 14, x[i]);
     }
 }
 
@@ -274,7 +295,13 @@ int option=1;
 printLogo(48);
 menu(option,maxOptions,mainMenuOptions);
 char ch;
-int num;
+void (*p[6])(void);
+p[0] = &write_account;
+p[1] = NULL;
+p[2] = NULL;
+p[3] = &display_sp;
+p[4] = &modify_account;
+p[5] = &delete_account;
 while(menuID == MAIN_MENU) // Main menu bool, to keep track of when main menu is visible
 {
     ch = getch(); //getting the pressed key
@@ -292,40 +319,12 @@ while(menuID == MAIN_MENU) // Main menu bool, to keep track of when main menu is
         }
     if(int(ch)==13) //if enter was pressed
     {
-        switch(option)
-        {
-            case 1:
-                menuID = 1; 
-                write_account();
-                break;
-            case 2: 
-				menuID = 2;
-				system("cls");
-				ENTER_ACCOUNT
-				deposit_withdraw(num,1);
-                break;
-            case 3:
-				ENTER_ACCOUNT
-				deposit_withdraw(num,2);
-				menuID = 3;
-                break;
-			case 4:
-				system("cls");
-				ENTER_ACCOUNT
-				display_sp(num);
-				break;
-            case 5:
-				ENTER_ACCOUNT
-				modify_account(num);
-				break;
-			case 6:
-				ENTER_ACCOUNT
-				delete_account(num);
-				break;
-			case 7:
-				exit(3);
-			
-        }
+		if(option==2 || option==3)
+			deposit_withdraw(option-1);
+		else if(option==7)
+			{system("cls");exit(3);}
+		else
+			p[option-1]();
     }
     menu(option,maxOptions,mainMenuOptions);
 }
@@ -353,44 +352,49 @@ void account::create_account()
 {
 	system("cls");
 	printLogo(47);
-	int index=6;
-	print(30, index, 0, "Enter the account number:");
+	print(xindex, yindex, 0, "Enter the account number:");
 	cin>>account_number;
-	print(30, index+1, 0, "Enter name of the account holder:");
-	print(30, index+2, 0, "-> ");
+	print(xindex, yindex+1, 0, "Enter name of the account holder:");
+	print(xindex, yindex+2, 0, "-> ");
 	cin.ignore();
 	cin.getline(name,50);
-	print(30, index+3, 0, "Enter the type of account(C/S):");
+	print(xindex, yindex+3, 0, "Enter the type of account(C/S):");
 	cin>>type;
 	type=toupper(type);
-	print(30, index+4, 0, "Enter the initial amount:");
+	print(xindex, yindex+4, 0, "Enter the initial amount:");
 	cin>>deposit;
-	print(30, index+5, 0, "Account Successfully Created!");
+	print(xindex, yindex+5, 0, "Account Successfully Created!");
 	getch();
 	system("cls");
 }
 
 void account::show_account() const
 {
-	print(20, 5, 0, "Account number:");
+	SetConsoleTextAttribute(console_color, 47);
+	print(43, yindex-6, 0, "| Account number: ");
 	cout<<account_number;
-	cout<<"\nAccount Holder Name : ";
+	print(43, yindex-5, 0, "| Name: ");
 	cout<<name;
-	cout<<"\nType of Account : "<<type;
-	cout<<"\nBalance amount : "<<deposit;
+	print(43, yindex-4, 0, "| Type: ");
+	cout<<type;
+	print(43, yindex-3, 0,"| Balance: ");
+	cout<<deposit<<"        ";
+	print(43, yindex-2, 0,"|");
+	SetConsoleTextAttribute(console_color, 15);
 }
 
 
 void account::modify()
 {
-	cout<<"\nAccount No. : "<<account_number;
-	cout<<"\nModify Account Holder Name : ";
+	print(xindex, yindex+3, 0, "Account Number: ");
+	cout<<account_number;
+	print(xindex, yindex+4, 0, "Modify Account Holder Name : ");
 	cin.ignore();
 	cin.getline(name,50);
-	cout<<"\nModify Type of Account : ";
+	print(xindex, yindex+5, 0, "Modify Type of Account(C/S) : ");
 	cin>>type;
 	type=toupper(type);
-	cout<<"\nModify Balance amount : ";
+	print(xindex, yindex+6, 0, "Modify Balance amount : ");
 	cin>>deposit;
 }
 
@@ -427,19 +431,20 @@ char account::rettype() const
 }
 void printLogo(int color)
 {
-std::cout<<"                                                        ";
+std::cout<<"                                                                  ";
+int index=5;
 SetConsoleTextAttribute(console_color, color);
-print(21,1,0,"         /    /\\.        \\      THE                     ");
-print(21,2,0,"        (    (` -`7       )    BANK                     ");
-print(21,3,0,"         \\    |  -\\      /      OF                      ");
-print(21,4,0,"          \\   c_ c.)_/  /      CATS                     ");
-print(21,5,0,"           \\           /                                ");
+print(index,1,0,"         /    /\\.        \\      THE                               ");
+print(index,2,0,"        (    (` -`7       )    BANK                               ");
+print(index,3,0,"         \\    |  -\\      /      OF                                ");
+print(index,4,0,"          \\   c_ c.)_/  /      CATS                               ");
+print(index,5,0,"           \\           /                                          ");
 		SetConsoleTextAttribute(console_color, 15);
 for(int i=0;i<12;i++)
 	{
-	print(21,6+i,0,"|");
-	print(55+21,6+i,0,"|");
+	print(index,6+i,0,"|");
+	print(65+index,6+i,0,"|");
 	}
-for(int i=22;i<55+21;i++)
+for(int i=index+1;i<65+index;i++)
 	print(i, 17, 0, "_");
 }
