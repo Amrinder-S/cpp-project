@@ -11,6 +11,19 @@ using namespace std;
 COORD coord = {0,0};
 HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
 int menuID = 0;
+//!			to set window size
+HWND WINAPI GetConsoleWindowNT(void)
+{
+    typedef HWND WINAPI(*GetConsoleWindowT)(void);
+    GetConsoleWindowT GetConsoleWindow;
+    HMODULE hk32Lib = GetModuleHandle(TEXT("KERNEL32.DLL"));
+    GetConsoleWindow = (GetConsoleWindowT)GetProcAddress(hk32Lib, TEXT("GetConsoleWindow"));
+    if(GetConsoleWindow == NULL){
+        return NULL;
+    }
+    return GetConsoleWindow();
+}
+//!			Class definition
 class account	//TODO : ADD AUTOMATIC ACCOUNT NUMBERS
 {
 	int account_number;
@@ -41,9 +54,13 @@ void menu(int option, int size,string x[]);
 void mainMenu();
 void print(int x,int y,int erase,const std::string& s);
 void gotoxy(int, int);
+void printLogo(int);
 //!     main function
 int main()
 {
+	HWND hWnd=GetConsoleWindowNT();
+    MoveWindow(hWnd,200,100,900,400,TRUE);
+
 mainMenu();
 return 0;
 }
@@ -60,7 +77,6 @@ void write_account()
 	ac.create_account();
 	outFile.write(reinterpret_cast<char *> (&ac), sizeof(account));
 	outFile.close();
-    getch();
     menuID = 0;
     mainMenu();
 }
@@ -170,33 +186,6 @@ void delete_account(int n)
 }
 
 
-//!    	function to display all accounts deposit list
-
-void display_all()
-{
-    system("cls");
-	account ac;
-	ifstream inFile;
-	inFile.open("account.dat",ios::binary);
-	if(!inFile)
-	{
-		cout<<"File could not be open !! Press any Key...";
-		return;
-	}
-	cout<<"\n\n\t\tACCOUNT HOLDER LIST\n\n";
-	cout<<"====================================================\n";
-	cout<<"A/c no.      NAME           Type  Balance\n";
-	cout<<"====================================================\n";
-	while(inFile.read(reinterpret_cast<char *> (&ac), sizeof(account)))
-	{
-		ac.report();
-	}
-	inFile.close();
-    getch();
-    menuID = 0;
-    mainMenu();
-}
-
 //!function to deposit and withdraw amounts
 void deposit_withdraw(int n, int option)
 {
@@ -219,15 +208,15 @@ void deposit_withdraw(int n, int option)
 			ac.show_account();
 			if(option==1)
 			{
-				cout<<"\n\n\tTO DEPOSITE AMOUNT ";
-				cout<<"\n\nEnter The amount to be deposited";
+				cout<<"\n\n\tTO DEPOSIT AMOUNT ";
+				cout<<"\n\nEnter The amount to be deposited: ";
 				cin>>amt;
 				ac.dep(amt);
 			}
 			if(option==2)
 			{
 				cout<<"\n\n\tTO WITHDRAW AMOUNT ";
-				cout<<"\n\nEnter The amount to be withdraw";
+				cout<<"\n\nEnter The amount to be withdraw:";
 				cin>>amt;
 				int bal=ac.retdeposit()-amt;
 				if((bal<500 && ac.rettype()=='S') || (bal<1000 && ac.rettype()=='C'))
@@ -259,11 +248,11 @@ void menu(int option, int size,std::string x[])
         if(option==(i+1))
         {
             if(i==size-1) SetConsoleTextAttribute(console_color, 4); else SetConsoleTextAttribute(console_color, 10);
-            print(50, 10+i, x[i].length() + 14,  "--->   "+x[i]+"   <---");
+            print(30, 6+i, x[i].length() + 14,  "--->   "+x[i]+"   <---");
             SetConsoleTextAttribute(console_color, 15);
         }
         else
-            print(50, 10+i, x[i].length() + 14, x[i]);
+            print(30, 6+i, x[i].length() + 14, x[i]);
     }
 }
 
@@ -282,7 +271,7 @@ string mainMenuOptions[] =
 "Exit"
 };
 int option=1;
-
+printLogo(48);
 menu(option,maxOptions,mainMenuOptions);
 char ch;
 int num;
@@ -339,7 +328,6 @@ while(menuID == MAIN_MENU) // Main menu bool, to keep track of when main menu is
         }
     }
     menu(option,maxOptions,mainMenuOptions);
-    
 }
 }
 
@@ -364,22 +352,28 @@ void insertLines (int x) {for(int i=0;i<x;i++)cout<<"\n";}
 void account::create_account()
 {
 	system("cls");
-	cout<<"\nEnter The account No. :";
+	printLogo(47);
+	int index=6;
+	print(30, index, 0, "Enter the account number:");
 	cin>>account_number;
-	cout<<"\n\nEnter The Name of The account Holder : ";
+	print(30, index+1, 0, "Enter name of the account holder:");
+	print(30, index+2, 0, "-> ");
 	cin.ignore();
 	cin.getline(name,50);
-	cout<<"\nEnter Type of The account (C/S) : ";
+	print(30, index+3, 0, "Enter the type of account(C/S):");
 	cin>>type;
 	type=toupper(type);
-	cout<<"\nEnter The Initial amount(>=500 for Saving and >=1000 for Current ) : ";
+	print(30, index+4, 0, "Enter the initial amount:");
 	cin>>deposit;
-	cout<<"\n\n\nAccount Created..";
+	print(30, index+5, 0, "Account Successfully Created!");
+	getch();
+	system("cls");
 }
 
 void account::show_account() const
 {
-	cout<<"\nAccount No. : "<<account_number;
+	print(20, 5, 0, "Account number:");
+	cout<<account_number;
 	cout<<"\nAccount Holder Name : ";
 	cout<<name;
 	cout<<"\nType of Account : "<<type;
@@ -430,4 +424,22 @@ int account::retdeposit() const
 char account::rettype() const
 {
 	return type;
+}
+void printLogo(int color)
+{
+std::cout<<"                                                        ";
+SetConsoleTextAttribute(console_color, color);
+print(21,1,0,"         /    /\\.        \\      THE                     ");
+print(21,2,0,"        (    (` -`7       )    BANK                     ");
+print(21,3,0,"         \\    |  -\\      /      OF                      ");
+print(21,4,0,"          \\   c_ c.)_/  /      CATS                     ");
+print(21,5,0,"           \\           /                                ");
+		SetConsoleTextAttribute(console_color, 15);
+for(int i=0;i<12;i++)
+	{
+	print(21,6+i,0,"|");
+	print(55+21,6+i,0,"|");
+	}
+for(int i=22;i<55+21;i++)
+	print(i, 17, 0, "_");
 }
