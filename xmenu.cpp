@@ -8,13 +8,13 @@
 #include<string>
 #define ENTER_ACCOUNT 	system("cls");printLogo(47);print(xindex, yindex+1, 0, "Enter account number: ");int n;cin>>n;
 #define MAIN_MENU 0
-int xindex=10,yindex=7;
+int xindex=10,yindex=7; // index for knowing where to start writing from
 using namespace std;
-COORD coord = {0,0};
-HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
+COORD coord = {0,0}; //Coords are used to set coordinates of cursor in console
+HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE); //Output Handle, useful for changing color of text
 int menuID = 0;
 //!			to set window size
-HWND WINAPI GetConsoleWindowNT(void)
+HWND WINAPI GetConsoleWindowNT(void) // REF: 1 Nothing to see here, this is used to set console size, to make sure everything draws well
 {
     typedef HWND WINAPI(*GetConsoleWindowT)(void);
     GetConsoleWindowT GetConsoleWindow;
@@ -61,16 +61,20 @@ void printLogo(int);
 int main()
 {
 	HWND hWnd=GetConsoleWindowNT();
-    MoveWindow(hWnd,100,50,1000,500,TRUE);
-	system("title C++ Project by Amrinder Singh ^|^| Bank System using OOP && cls");
+    MoveWindow(hWnd,100,50,1000,500,TRUE); //moving console to some position, see REF: 1
+	system("title C++ Project by Amrinder Singh && cls");
 mainMenu();
 return 0;
 }
 
 
 //!     file operation functions
+/* Note: they are quite fancy, so if you don't get them, don't panic.
 
-
+ Note for copy pasters: you can use these functions as it is in your project,
+ They will work just fine for writing in any project basically, just replace 'account' with your class type 
+ and you are good to go. tho remove the functions defined by me.
+*/
 void write_account()
 {
 	account ac;
@@ -261,7 +265,7 @@ ENTER_ACCOUNT
 }
 
 //!         function definitions
-void menu(int option, int size,std::string x[])
+void menu(int option, int size,std::string x[]) //accepted arguments: option selected, number of options, array of strings(options)
 {
     for(int i=0;i<size;i++)
     {
@@ -278,7 +282,7 @@ void menu(int option, int size,std::string x[])
 }
 
 
-void mainMenu()
+void mainMenu() // main Menu function, shows the main menu.
 {
 int maxOptions = 7; // Max Options means number of items in the menu
 string mainMenuOptions[] = 
@@ -295,10 +299,10 @@ int option=1;
 printLogo(48);
 menu(option,maxOptions,mainMenuOptions);
 char ch;
-void (*p[6])(void);
+void (*p[6])(void); // pointers to functions to avoid making endless switch cases
 p[0] = &write_account;
-p[1] = NULL;
-p[2] = NULL;
+p[1] = NULL; //accepted integer as arguments
+p[2] = NULL; //hence set them as null, so they dont cause issues
 p[3] = &display_sp;
 p[4] = &modify_account;
 p[5] = &delete_account;
@@ -320,30 +324,30 @@ while(menuID == MAIN_MENU) // Main menu bool, to keep track of when main menu is
     if(int(ch)==13) //if enter was pressed
     {
 		if(option==2 || option==3)
-			deposit_withdraw(option-1);
+			deposit_withdraw(option-1); //since they can't be called via pointer array, calling em this way.
 		else if(option==7)
-			{system("cls");exit(3);}
+			{system("cls");exit(3);} //if enter was pressed on "exit" button
 		else
-			p[option-1]();
+			p[option-1](); //call the function assigned via pointer functions
     }
-    menu(option,maxOptions,mainMenuOptions);
+    menu(option,maxOptions,mainMenuOptions); //sending it to another function, which lets us refresh the menu many times with minimal updations.
 }
 }
 
 void gotoxy(int a, int b){
     coord.X = a;
     coord.Y = b;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord); //used to jump console-cursor to the position we desire
 }
 
-void print(int x,int y,int erase,const std::string& s) {
+void print(int x,int y,int erase,const std::string& s) { //since cout is mainstream, defined this print function to be able to print at the position i want
 gotoxy(x,y);
 using namespace std;
 std::cout<<string(erase, ' ')<<string(erase, '\b');
 std::cout<<s;
 }
 
-void insertLines (int x) {for(int i=0;i<x;i++)cout<<"\n";}
+void insertLines (int x) {for(int i=0;i<x;i++)cout<<"\n";} //Planned to use it, turned out to be pointless, still honouring it and keeping the one line for no reason
 
 
 //Class definition
@@ -370,7 +374,7 @@ void account::create_account()
 
 void account::show_account() const
 {
-	SetConsoleTextAttribute(console_color, 47);
+	SetConsoleTextAttribute(console_color, 47); //setting color of the console
 	print(43, yindex-6, 0, "| Account number: ");
 	cout<<account_number;
 	print(43, yindex-5, 0, "| Name: ");
@@ -429,7 +433,7 @@ char account::rettype() const
 {
 	return type;
 }
-void printLogo(int color)
+void printLogo(int color) //cute cat logo since i'm a cat lover
 {
 std::cout<<"                                                                  ";
 int index=5;
