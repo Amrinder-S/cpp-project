@@ -2,18 +2,40 @@
 
 //!     function Declaration
 void welcomeScreen();
-void mainMenu();
-
+void loginMenu();
+void accountManagementMenu();
+void inputSomething();
 int main()
 {
+    toggleCursor(false);
     welcomeScreen();
-std::string mainMenuOptions[7] = {"New Account","Deposit Amount","Withdraw Amount","Balance Enquiry","Modify Account","Delete Account","Exit"};
-void (*mainMenuFunctions[7])(void)            = {NULL          ,            NULL,             NULL,             NULL,            NULL,            NULL, NULL};
-mainMenu(1, 7, mainMenuOptions, mainMenuFunctions);
+    loginMenu();
     setConsoleColor(15);
     return EXIT_SUCCESS;
 }
+void inputSomething()
+{
+    emptyMenu();
+    createBox(10, 10, 20, 3, 4, 1);
+    gotoxy(10,10);
+    std::string Hello;
+    getline(std::cin >> std::ws, Hello, '\n');
+    loginMenu();
+}
 
+void loginMenu()
+{
+    std::string menuOptions[3] = {"Create Account"          , "Login", "Exit"};
+    void (*menuFunctions[3])(void) = {inputSomething,  accountManagementMenu  ,     NULL};
+    showMenu(1, 3, menuOptions, menuFunctions, 3);
+}
+void accountManagementMenu()
+{
+    
+std::string menuOptions[7] =      {"Deposit Amount","Withdraw Amount","Balance Enquiry","Modify Account","Delete Account","Back"  ,"Exit"};
+void (*menuFunctions[7])(void) = {            NULL,             NULL,             NULL,            NULL,            NULL, loginMenu, NULL };
+showMenu(1, 7, menuOptions, menuFunctions, 1);
+}
 
 
 void welcomeScreen()
