@@ -43,9 +43,24 @@ HWND hWnd=GetConsoleWindowNT();
 void gotoxy(int, int); //Takes your cursor to x,y coordinates of console for writing
 void print(int x,int y,int erase, int color,const std::string& s); // cout's on x,y coordinates. erase = how many followed characters to erase, int color = color id(in c.exe), s = string literal "ONLY"
 void setConsoleColor(int); // sets color of the console, from c.exe.
-void createBox(int x, int y, int size_x, int size_y, int color, int fill); //x,y=coordinates of box starting, size_x,size_y=dimensions of box, color, fill=if to fill color or not(1=true,0=false)
+void createBox(int x, int y, int size_x, int size_y, int color, int fill); /*x,y=coordinates of box starting, size_x,size_y=dimensions of box, color, fill=if to fill color or not(1=true,0=false)
+example:                                   /'`----------------------------.,
+createBox(2,1,getConsoleCoords('x')-2,6,4,1); //creates a box with fill <-/ at coordinates 2,1. Width is same as whole console size, rest is self explanatory
+*/
 void displayAscii(int x,int y,int color, int logosize, std::string logo[]); //Displays an ascii logo etc from string array. x,y=coords, color, logosize = size of string array, logo[] - the array. 
-void createTextBox(int x, int y, int color, std::string text); //creates a Text Box. can be used for input too.
+/*Example:
+    std::string logo[] = {
+        "         _.--._THE",
+        "    _.-.'      `.-._RED",
+        "  .' ./`--...--' \\  `.HAT",
+        "  `.'.`--.._..--'   .' BANK",
+        "  ( (-..__    __..-'",
+        "   )_)    ````"
+    };
+    int logosize = sizeof(logo)/sizeof(logo[0]);
+    displayAscii(2,1,4,logosize,logo);//creates the above logo at coordinates 2,1
+*/
+void createTextBox(int x, int y, int color, std::string text); /* creates a Text Box. can be used for input too.*/
 void displayOptions(int option, int size,std::string x[], int spacing); /* pass selected option, number of options in size, string array with options, spacing to put between each option.
 No need to use above function unless you totally understand what it does. It is managed by showMenu function otherwise*/
 void emptyMenu(); // shows an empty menu.
