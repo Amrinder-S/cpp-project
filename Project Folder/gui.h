@@ -1,6 +1,7 @@
 #include<iostream>
 #include<windows.h>
 #include<conio.h>
+#define BG_COLOR 497
 COORD coord = {0,0}; //Coords are used to set coordinates of cursor in console
 HANDLE console_handle = GetStdHandle(STD_OUTPUT_HANDLE); //Output Handle, useful for changing color of text
 int x_coord = GetSystemMetrics(SM_CXSCREEN);
@@ -60,10 +61,10 @@ void displayAscii(int x,int y,int color, int logosize, std::string logo[]); //Di
     int logosize = sizeof(logo)/sizeof(logo[0]);
     displayAscii(2,1,4,logosize,logo);//creates the above logo at coordinates 2,1
 */
-void createTextBox(int x, int y, int color, std::string text); /* creates a Text Box. can be used for input too.*/
 void displayOptions(int option, int size,std::string x[], int spacing); /* pass selected option, number of options in size, string array with options, spacing to put between each option.
 No need to use above function unless you totally understand what it does. It is managed by showMenu function otherwise*/
 void emptyMenu(); // shows an empty menu.
+void errorBox(std::string msg);
 void showMenu(int option, int maxOptions, std::string menuOptions[], void (*p[])(void), int spacing); /* 
                   ^->selected option   ^->no of options   ^->array of options   ^->Array of functions ^->Space between each option
 Example usage:     
@@ -147,7 +148,7 @@ void menu(int option, int size,std::string x[], int spacing) //accepted argument
 
 void emptyMenu()
 {
-    setConsoleColor(384);
+    setConsoleColor(BG_COLOR);
     int x = getConsoleCoords('x'), y = getConsoleCoords('y');
     system("cls");
     createBox(0, 0, x, y, 47,0);
@@ -198,4 +199,14 @@ while(MENU) // Main menu bool, to keep track of when main menu is visible
     menu(option,maxOptions,menuOptions, spacing); //sending it to another function, which lets us refresh the menu many times with minimal updations.
 }
 
+}
+
+void errorBox(std::string msg)
+{
+    emptyMenu();
+    createBox(centerTextX(msg.length() + 40), 8, msg.length() + 40, 12, 4, 0);
+    print(centerTextX(7), 10, 0, 372, " Error " );
+    print(centerTextX(msg.length()+2), 14, 0, 6, " "+msg+" " );
+    print(centerTextX(2), 17, 0, 3, " OK " );
+    getch();
 }

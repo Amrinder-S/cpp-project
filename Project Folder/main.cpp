@@ -1,45 +1,59 @@
-#include "account.h"
+#include "filehandling.h"
 
 //!     function Declaration
 void welcomeScreen();
 void loginMenu();
 void accountManagementMenu();
 void inputSomething();
-void close() {system("cls");setConsoleColor(15);exit(3);}
+void createAccount();
+void close() {setConsoleColor(15);system("cls");exit(3);}
+void accountInfo();
+void login();
+void deposit();
+void withdraw();
 
 int main()
 {
     toggleCursor(false);
-    // welcomeScreen();
-    // loginMenu();
-    createAccount();
+    welcomeScreen();
+    loginMenu();
     setConsoleColor(15);
     return EXIT_SUCCESS;
-}
-void inputSomething()
-{
-    emptyMenu();
-    createBox(10, 10, 20, 3, 4, 1);
-    gotoxy(10,10);
-    std::string Hello;
-    getline(std::cin >> std::ws, Hello, '\n');
-    loginMenu();
 }
 
 void loginMenu()
 {
-    std::string menuOptions[3] = {"Create Account"          , "Login", "Exit"};
-    void (*menuFunctions[3])(void) = {inputSomething,  accountManagementMenu  ,     close};
+    std::string menuOptions[3] = {"Create Account" , "Login" , "Exit"};
+    void (*menuFunctions[3])(void) = {createAccount,  login  ,  close};
     showMenu(1, 3, menuOptions, menuFunctions, 3);
+}
+void login()
+{
+int account_number;
+char pass[30];
+emptyMenu();
+print(centerTextX(18), 8, 18, 496, "Account Number: ");
+std::cin>>account_number;
+print(centerTextX(18), 10, 18, 496, "Password: ");
+std::cin.getline(pass, 30);
+if(searchAccount(account_number)) //if account is found
+{
+    if(a.authenticate(pass)) //if password matches.
+    {
+        accountManagementMenu(); //show account management menu.
+    }
+    else
+        errorBox(" Invalid Password ");
+}
+else
+    errorBox(" Account Not Found! ");
 }
 void accountManagementMenu()
 {
-    
-std::string menuOptions[7] =      {"Deposit Amount","Withdraw Amount","Balance Enquiry","Modify Account","Delete Account","Back"  ,"Exit"};
-void (*menuFunctions[7])(void) = {            NULL,             NULL,             NULL,            NULL,            NULL, loginMenu, close };
-showMenu(1, 7, menuOptions, menuFunctions, 1);
+    std::string menuOptions[7] =      {"Account Information", "Deposit Amount","Withdraw Amount","Modify Account","Delete Account","Log-out"  ,"Exit"};
+    void (*menuFunctions[7])(void) = {           accountInfo,          deposit,         withdraw,            NULL,            NULL, loginMenu, close };
+    showMenu(1, 7, menuOptions, menuFunctions, 2);
 }
-
 
 void welcomeScreen()
 {
@@ -75,3 +89,29 @@ setConsoleColor(15);
 
     getch();
 }
+void createAccount()
+{   
+    emptyMenu();
+    account acc;
+    acc.createAccount(getAvailableAccountNumber());
+    acc.showAccountInfo();
+    saveAccount(acc);
+    getch();
+    loginMenu();
+}
+void accountInfo()
+{
+    a.showAccountInfo();
+    accountManagementMenu();
+}
+void deposit()
+{
+    a.deposit();
+    accountManagementMenu();
+}
+void withdraw()
+{
+    a.withdraw();
+    accountManagementMenu();
+}
+

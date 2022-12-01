@@ -420,7 +420,7 @@ void account::draw(int x)
 	
 void account::report() const
 {
-	cout<<account_number<<setw(10)<<" "<<name<<setw(10)<<" "<<type<<setw(6)<<deposit<<endl;
+	// cout<<account_number<<setw(10)<<" "<<name<<setw(10)<<" "<<type<<setw(6)<<deposit<<endl;
 }
 
 	
