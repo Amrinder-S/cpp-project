@@ -1,5 +1,7 @@
 
 #include "gui.h"
+#include "functions.h"
+void createAccount();
 class account {
     private: int account_number;
     protected:
@@ -9,13 +11,35 @@ class account {
     float balance;
     public:
     int returnAccountNumber() {return account_number;}
-    void createAccount(int a, std::string name, std::string pw, char type, float bal)
+    void createAccount()
     {
-        account_number = a;
-        account_name = name;
-        password = pw;
-        account_type = type;
-        balance = bal;
+        account_number = 1;
+        print(centerTextX(30), 8, 30, 15, "Enter your Name: ");
+        account_name = getString();
+        print(centerTextX(30), 9, 30, 15, "Enter your Password: ");
+        password = getString();
+        reEnterAccountType:
+        print(centerTextX(30), 10, 30, 15, "Enter your account type(C/S): ");
+        account_type = tolower(getch());
+        if(!(account_type=='c' || account_type=='s'))
+        {
+        print(centerTextX(30), 11, 30, 4, "Wrong account type, enter C/S^ ");
+        goto reEnterAccountType;
+        }
+        print(centerTextX(30), 11, 30, 15, "Enter the starting balance(non 0): ");
+        std::string temp = getString();
+        balance = strtof(temp.c_str(),NULL);
+        while(!balance)
+        {
+            print(centerTextX(30), 12, 40, 4, "Invalid input! Enter balance: ");
+            std::string temp = getString();
+            balance = strtof(temp.c_str(),NULL);
+        }
+    }
+    void showAccountInfo()
+    {
+        gotoxy(15,6);
+        std::cout<<"Name:"<<account_name<<" password:"<<password<<" account type: "<<account_type<<" bal:"<<balance;
     }
     void alterBalance(float n)
     {
@@ -23,3 +47,10 @@ class account {
     }
 };
 
+void createAccount()
+{   
+    emptyMenu();
+    account a;
+    a.createAccount();
+    a.showAccountInfo();
+}

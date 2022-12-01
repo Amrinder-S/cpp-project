@@ -5,11 +5,14 @@ void welcomeScreen();
 void loginMenu();
 void accountManagementMenu();
 void inputSomething();
+void close() {system("cls");setConsoleColor(15);exit(3);}
+
 int main()
 {
     toggleCursor(false);
-    welcomeScreen();
-    loginMenu();
+    // welcomeScreen();
+    // loginMenu();
+    createAccount();
     setConsoleColor(15);
     return EXIT_SUCCESS;
 }
@@ -26,14 +29,14 @@ void inputSomething()
 void loginMenu()
 {
     std::string menuOptions[3] = {"Create Account"          , "Login", "Exit"};
-    void (*menuFunctions[3])(void) = {inputSomething,  accountManagementMenu  ,     NULL};
+    void (*menuFunctions[3])(void) = {inputSomething,  accountManagementMenu  ,     close};
     showMenu(1, 3, menuOptions, menuFunctions, 3);
 }
 void accountManagementMenu()
 {
     
 std::string menuOptions[7] =      {"Deposit Amount","Withdraw Amount","Balance Enquiry","Modify Account","Delete Account","Back"  ,"Exit"};
-void (*menuFunctions[7])(void) = {            NULL,             NULL,             NULL,            NULL,            NULL, loginMenu, NULL };
+void (*menuFunctions[7])(void) = {            NULL,             NULL,             NULL,            NULL,            NULL, loginMenu, close };
 showMenu(1, 7, menuOptions, menuFunctions, 1);
 }
 

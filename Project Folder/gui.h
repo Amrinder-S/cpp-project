@@ -79,14 +79,14 @@ Example usage:
 void gotoxy(int a, int b) {
     coord.X = a;
     coord.Y = b;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord); //used to jump console-cursor to the position we desire
+    SetConsoleCursorPosition(console_handle, coord); //used to jump console-cursor to the position we desire
 }
 void print(int x,int y,int erase, int color,const std::string& s) { //function to print text at given x,y coords on console
 gotoxy(x,y);
 setConsoleColor(color);
 std::cout<<std::string(erase, ' ')<<std::string(erase, '\b')<<s;
-
 }
+
 void setConsoleColor(int color)
 {
     SetConsoleTextAttribute(console_handle, color);
