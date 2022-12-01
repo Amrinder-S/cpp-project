@@ -59,7 +59,7 @@ class account {
     }
     bool authenticate(char str[30]) {
         std::cin.getline(str, 30);
-        return (strcmp(str, password)); //returns true if password matches.
+        return (!strcmp(str, password)); //returns true if password matches.
     }
     void withdraw()
     {
@@ -93,6 +93,27 @@ class account {
         std::cout<<n<<" Deposited to account number "<<account_number<<" New Balance: "<<balance;
         print(centerTextX(4), 12, 0, 3, " OK ");
         getch();
+    }
+
+    void modify()
+    {
+        print(centerTextX(30), 8, 30, 15, "Enter new Name: ");
+        std::cin.getline(account_name, 30);
+        print(centerTextX(30), 10, 30, 15, "Enter new Password: ");
+        std::cin.getline(password, 30);
+        reEnterAccountType:
+        print(centerTextX(30), 12, 30, 15, "Enter new account type(C/S): ");
+        account_type = tolower(getch());
+        if(!(account_type=='c' || account_type=='s'))
+        {
+        print(centerTextX(30), 14, 30, 4, "Wrong account type, enter C/S^ ");
+        goto reEnterAccountType;
+        }
+        else
+        {
+            (account_type=='c')?std::cout<<" Current":std::cout<<" Savings";
+            print(centerTextX(30), 14, 31, 497, " "); //clearing the pervious wrong account type message
+        }
     }
 
 };

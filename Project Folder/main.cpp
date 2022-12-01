@@ -11,6 +11,8 @@ void accountInfo();
 void login();
 void deposit();
 void withdraw();
+void deleteAccount();
+void modifyAccount();
 
 int main()
 {
@@ -44,6 +46,7 @@ if(searchAccount(account_number)) //if account is found
     }
     else
         errorBox(" Invalid Password ");
+    loginMenu();
 }
 else
     errorBox(" Account Not Found! ");
@@ -51,7 +54,7 @@ else
 void accountManagementMenu()
 {
     std::string menuOptions[7] =      {"Account Information", "Deposit Amount","Withdraw Amount","Modify Account","Delete Account","Log-out"  ,"Exit"};
-    void (*menuFunctions[7])(void) = {           accountInfo,          deposit,         withdraw,            NULL,            NULL, loginMenu, close };
+    void (*menuFunctions[7])(void) = {           accountInfo,          deposit,         withdraw,   modifyAccount,   deleteAccount, loginMenu, close };
     showMenu(1, 7, menuOptions, menuFunctions, 2);
 }
 
@@ -95,7 +98,7 @@ void createAccount()
     account acc;
     acc.createAccount(getAvailableAccountNumber());
     acc.showAccountInfo();
-    saveAccount(acc);
+    saveAccount(acc, 0);
     getch();
     loginMenu();
 }
@@ -107,11 +110,28 @@ void accountInfo()
 void deposit()
 {
     a.deposit();
+    updateAccount();
     accountManagementMenu();
 }
 void withdraw()
 {
     a.withdraw();
+    updateAccount();
     accountManagementMenu();
 }
-
+void deleteAccount()
+{
+    removeAccount(a.returnAccountNumber());
+    loginMenu();
+}
+void modifyAccount()
+{
+    emptyMenu();
+    a.modify();
+    updateAccount();
+    emptyMenu();
+    print(centerTextX(16), 10, 0, 500, "Account Updated!");
+    print(centerTextX(4), 12, 0, 400, " OK ");
+    getch();
+    loginMenu();
+}
